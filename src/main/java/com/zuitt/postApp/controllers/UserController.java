@@ -24,24 +24,28 @@ public class UserController {
 
     @RequestMapping(value = "/users/register", method = RequestMethod.POST)
 
-    public ResponseEntity<Object> register(@RequestBody Map<String, String> body) throws UserException{
+    public ResponseEntity<Object> register(@RequestBody Map<String, String> body){
         String username = body.get("username");
 
-//      Check if the username already exist.
-        if(!userService.findByUsername(username).isEmpty()){
-            throw new UserException("Username already exists!");
-        } else {
-            String password = body.get("password");
+        try {
+//          Check if the username already exist.
+            if(!userService.findByUsername(username).isEmpty()){
+                throw new UserException("Username already exists!");
+            } else {
+                String password = body.get("password");
 
-//           hash the password before saving
-            String encodedPassword = new BCryptPasswordEncoder().encode(password);
+    //           hash the password before saving
+                String encodedPassword = new BCryptPasswordEncoder().encode(password);
 
-//            Creation of new user object
-            User newUser = new User(username, encodedPassword);
+    //            Creation of new user object
+                User newUser = new User(username, encodedPassword);
 
-            userService.createUser(newUser);
+                userService.createUser(newUser);
 
-            return new ResponseEntity<>("User registered successfully.", HttpStatus.CREATED);
+                return new ResponseEntity<>("User registered successfully.", HttpStatus.CREATED);
+            }
+        } catch (UserException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 

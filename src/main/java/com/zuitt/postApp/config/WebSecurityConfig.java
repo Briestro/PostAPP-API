@@ -109,6 +109,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/users/register")
                         .permitAll()
 
+                        // Let Spring Boot's error page render with its real status code
+                        .requestMatchers("/error")
+                        .permitAll()
+
                         // Anyone can view posts
                         .requestMatchers(
                                 HttpMethod.GET,
